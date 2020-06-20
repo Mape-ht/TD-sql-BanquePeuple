@@ -1,0 +1,303 @@
+MariaDB [(none)]> CREATE DATABASE bpmape_gr2;
+
+MariaDB [(none)]> USE bpmape_gr2;
+Database changed
+
+MariaDB [bpmape_gr2]> CREATE TABLE profil(
+    -> id INT AUTO_INCREMENT,
+    -> libelle VARCHAR (55),
+    -> PRIMARY KEY(id));
+Query OK, 0 rows affected (0.551 sec)
+
+MariaDB [bpmape_gr2]> desc profil;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| id      | int(11)     | NO   | PRI | NULL    | auto_increment |
+| libelle | varchar(55) | YES  |     | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+2 rows in set (0.190 sec)
+
+MariaDB [bpmape_gr2]> ALTER TABLE profil CHANGE COLUMN id profil_id INT AUTO_INCREMENT;
+Query OK, 0 rows affected (0.138 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> DESC profil;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| profil_id | int(11)     | NO   | PRI | NULL    | auto_increment |
+| libelle   | varchar(55) | YES  |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+2 rows in set (0.039 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE employe(
+    -> id INT AUTO_INCREMENT,
+    -> nom VARCHAR(55),
+    -> prenom VARCHAR(55),
+    -> telephone VARCHAR(15),
+    -> adresse VARCHAR(55),
+    -> email VARCHAR(55) DEFAULT NULL,
+    -> profession VARCHAR(20),
+    -> nci VARCHAR(20),
+    -> login VARCHAR(20),
+    -> password VARCHAR(20),
+    -> PRIMARY KEY(id));
+Query OK, 0 rows affected (0.297 sec)
+
+MariaDB [bpmape_gr2]> ALTER TABLE employe CHANGE COLUMN id employe_id INT AUTO_INCREMENT;
+Query OK, 0 rows affected (0.149 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> desc employe;
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| employe_id | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nom        | varchar(55) | YES  |     | NULL    |                |
+| prenom     | varchar(55) | YES  |     | NULL    |                |
+| telephone  | varchar(15) | YES  |     | NULL    |                |
+| adresse    | varchar(55) | YES  |     | NULL    |                |
+| email      | varchar(55) | YES  |     | NULL    |                |
+| profession | varchar(20) | YES  |     | NULL    |                |
+| nci        | varchar(20) | YES  |     | NULL    |                |
+| login      | varchar(20) | YES  |     | NULL    |                |
+| password   | varchar(20) | YES  |     | NULL    |                |
++------------+-------------+------+-----+---------+----------------+
+10 rows in set (0.030 sec)
+
+
+MariaDB [bpmape_gr2]> CREATE TABLE statut(
+    -> statut_id INT AUTO_INCREMENT,
+    -> datestatut DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -> datefin DATETIME,
+    -> profil_id INT,
+    -> employe_id INT,
+    -> PRIMARY KEY(statut_id),
+    -> FOREIGN KEY(profil_id) REFERENCES profil(profil_id),
+    -> FOREIGN KEY(employe_id) REFERENCES employe(employe_id));
+Query OK, 0 rows affected (0.431 sec)
+
+MariaDB [bpmape_gr2]> desc statut;
++------------+----------+------+-----+---------------------+----------------+
+| Field      | Type     | Null | Key | Default             | Extra          |
++------------+----------+------+-----+---------------------+----------------+
+| statut_id  | int(11)  | NO   | PRI | NULL                | auto_increment |
+| datestatut | datetime | YES  |     | current_timestamp() |                |
+| datefin    | datetime | YES  |     | NULL                |                |
+| profil_id  | int(11)  | YES  | MUL | NULL                |                |
+| employe_id | int(11)  | YES  | MUL | NULL                |                |
++------------+----------+------+-----+---------------------+----------------+
+5 rows in set (0.477 sec)
+
+
+MariaDB [bpmape_gr2]> CREATE TABLE agence(
+    -> agence_id INT,
+    -> nom VARCHAR(55),
+    -> region VARCHAR(55),
+    -> employe_id INT,
+    -> PRIMARY KEY(agence_id),
+    -> FOREIGN KEY(employe_id) REFERENCES employe(employe_id));
+Query OK, 0 rows affected (0.606 sec)
+
+MariaDB [bpmape_gr2]> desc agence;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| agence_id  | int(11)     | NO   | PRI | NULL    |       |
+| nom        | varchar(55) | YES  |     | NULL    |       |
+| region     | varchar(55) | YES  |     | NULL    |       |
+| employe_id | int(11)     | YES  | MUL | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.114 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE affectation(
+    -> affectation_id INT AUTO_INCREMENT,
+    -> dateaffectation DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -> datefin DATETIME,
+    -> employe_id INT,
+    -> agence_id INT,
+    -> PRIMARY KEY(affectation_id),
+    -> FOREIGN KEY (employe_id) REFERENCES employe(employe_id),
+    -> FOREIGN KEY (agence_id) REFERENCES agence(agence_id));
+Query OK, 0 rows affected (0.457 sec)
+
+MariaDB [bpmape_gr2]> desc affectation;
++-----------------+----------+------+-----+---------------------+----------------+
+| Field           | Type     | Null | Key | Default             | Extra          |
++-----------------+----------+------+-----+---------------------+----------------+
+| affectation_id  | int(11)  | NO   | PRI | NULL                | auto_increment |
+| dateaffectation | datetime | YES  |     | current_timestamp() |                |
+| datefin         | datetime | YES  |     | NULL                |                |
+| employe_id      | int(11)  | YES  | MUL | NULL                |                |
+| agence_id       | int(11)  | YES  | MUL | NULL                |                |
++-----------------+----------+------+-----+---------------------+----------------+
+5 rows in set (0.031 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE type_transaction(
+    -> typetrans_id INT,
+    -> libelle VARCHAR(20),
+    -> PRIMARY KEY(typetrans_id));
+Query OK, 0 rows affected (0.452 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE type_frais(
+    -> typefrais_id INT,
+    -> libelle VARCHAR(20),
+    -> PRIMARY KEY(typefrais_id));
+Query OK, 0 rows affected (0.313 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE frais_bancaire(
+    -> fraisbanc_id INT,
+    -> fraisbanc FLOAT,
+    -> date DATETIME,
+    -> typefrais_id INT,
+    -> PRIMARY KEY(fraisbanc_id),
+    -> FOREIGN KEY(typefrais_id) REFERENCES type_frais(typefrais_id));
+Query OK, 0 rows affected (0.598 sec)
+
+
+MariaDB [bpmape_gr2]> CREATE TABLE type_compte(
+    -> typecompte_id INT,
+    -> libelle VARCHAR(20),
+    -> PRIMARY KEY(typecompte_id));
+Query OK, 0 rows affected (0.331 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE type_client(
+    -> typeclt_id INT,
+    -> libelle VARCHAR(20),
+    -> PRIMARY KEY(typeclt_id));
+Query OK, 0 rows affected (0.386 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE transaction(
+    -> trans_id INT AUTO_INCREMENT,
+    -> montant_trans FLOAT,
+    -> typetrans_id INT,
+    -> fraisbanc_id INT,
+    -> date_trans DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -> employe_id INT,
+    -> PRIMARY KEY(trans_id),
+    -> FOREIGN KEY(typetrans_id) REFERENCES type_transaction(typetrans_id),
+    -> FOREIGN KEY(fraisbanc_id) REFERENCES frais_bancaire(fraisbanc_id),
+    -> FOREIGN KEY(employe_id) REFERENCES employe(employe_id));
+Query OK, 0 rows affected (0.421 sec)
+--compte_id FK sera intégré une fois la table compte créée--
+
+
+MariaDB [bpmape_gr2]> CREATE TABLE etat_compte(
+    -> etatcpte_id INT,
+    -> libelle VARCHAR(20),
+    -> PRIMARY KEY(etatcpte_id));
+Query OK, 0 rows affected (0.361 sec)
+
+MariaDB [bpmape_gr2]> CREATE TABLE client_physique(
+    -> cltphy_id INT AUTO_INCREMENT,
+    -> nom VARCHAR(55),
+    -> prenom VARCHAR(55),
+    -> telephone VARCHAR(55),
+    -> salaire FLOAT,
+    -> adresse VARCHAR(55),
+    -> profession VARCHAR(20),
+    -> login VARCHAR(20),
+    -> password VARCHAR(20),
+    -> email VARCHAR(30) DEFAULT NULL,
+    -> nci VARCHAR(20),
+    -> typeclt_id INT,
+    -> PRIMARY KEY(cltphy_id),
+    -> FOREIGN KEY(typeclt_id) REFERENCES type_client(typeclt_id));
+Query OK, 0 rows affected (0.493 sec)
+--compte_id FK sera intégré une fois la table compte créée--
+
+
+MariaDB [bpmape_gr2]> CREATE TABLE client_moral(
+    -> cltmoral_id INT AUTO_INCREMENT,
+    -> raison_social VARCHAR(20),
+    -> nom VARCHAR(50),
+    -> adresse VARCHAR(55),
+    -> numidentf VARCHAR(55),
+    -> telephone VARCHAR(15),
+    -> email VARCHAR(30) DEFAULT NULL,
+    -> login VARCHAR(30),
+    -> password VARCHAR(30),
+    -> PRIMARY KEY(cltmoral_id),
+    -> typeclt_id INT,
+    -> FOREIGN KEY(typeclt_id) REFERENCES type_client(typeclt_id));
+Query OK, 0 rows affected (0.496 sec)
+
+--compte_id FK sera intégré une fois la table compte créée--
+
+
+MariaDB [bpmape_gr2]> CREATE TABLE compte_client(
+    -> compteclt_id INT AUTO_INCREMENT,
+    -> numeroCte VARCHAR(55),
+    -> clerib VARCHAR(55),
+    -> agence_id INT,
+    -> solde FLOAT,
+    -> etatcpte_id INT,
+    -> typeclt_id INT,
+    -> cltphy_id INT,
+    -> cltmoral_id INT,
+    -> datecrea DATETIME,
+    -> dateferme DATETIME DEFAULT NULL,
+    -> datefertempo DATETIME DEFAULT NULL,
+    -> datereouv DATETIME DEFAULT NULL,
+    -> PRIMARY KEY(compteclt_id),
+    -> FOREIGN KEY(agence_id) REFERENCES agence(agence_id),
+    -> FOREIGN KEY(etatcpte_id) REFERENCES etat_compte(etatcpte_id),
+    -> FOREIGN KEY(typeclt_id) REFERENCES type_client(typeclt_id),
+    -> FOREIGN KEY(cltphy_id) REFERENCES client_physique(cltphy_id),
+    -> FOREIGN KEY(cltmoral_id) REFERENCES client_moral(cltmoral_id),
+    -> fraisbanc_id INT,
+    -> FOREIGN KEY(fraisbanc_id) REFERENCES frais_bancaire(fraisbanc_id));
+Query OK, 0 rows affected (0.394 sec)
+
+MariaDB [bpmape_gr2]> ALTER TABLE transaction ADD compteclt_id INT;
+Query OK, 0 rows affected (0.362 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> ALTER TABLE transaction ADD FOREIGN KEY(compteclt_id) REFERENCES compte_client(compteclt_id);
+Query OK, 0 rows affected (1.183 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> ALTER TABLE client_physique ADD compteclt_id INT;
+Query OK, 0 rows affected (0.143 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> ALTER TABLE client_physique ADD FOREIGN KEY(compteclt_id) REFERENCES compte_client(compteclt_id);
+Query OK, 0 rows affected (1.040 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> ALTER TABLE client_moral ADD compteclt_id INT;
+Query OK, 0 rows affected (0.159 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bpmape_gr2]> ALTER TABLE client_moral ADD FOREIGN KEY(compteclt_id) REFERENCES compte_client(compteclt_id);
+Query OK, 0 rows affected (0.915 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+MariaDB [bpmape_gr2]> show tables;
++----------------------+
+| Tables_in_bpmape_gr2 |
++----------------------+
+| affectation          |
+| agence               |
+| client_moral         |
+| client_physique      |
+| compte_client        |
+| employe              |
+| etat_compte          |
+| frais_bancaire       |
+| profil               |
+| statut               |
+| transaction          |
+| type_client          |
+| type_compte          |
+| type_frais           |
+| type_transaction     |
++----------------------+
+15 rows in set (0.001 sec)
+
+
+
+
+
